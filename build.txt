@@ -1,0 +1,27 @@
+Lecture 2: Repeated Code TRAP and Subroutine
+--------------------------------------------
+
+1. Configure LC-3 so that TRAP x10 multiplies R1 * R2 and stores the result
+   in R0. [Bonus: ensure the loop runs no more than 16 times]
+2. Rewrite the multiplication TRAP as a subroutine
+3. Write a subroutine to compute the factorial of R1 and puts the result in R0
+
+Lecture 3: Stack
+----------------
+
+1. Write PUSH and POP on the stack using R6 as a stack pointer
+
+Lecture 4: Stack Usage
+----------------------
+
+1. A train enters a track in some order given by a string from R1
+   and the desired output order is in R2. In between the input and output
+   is a spur that serves as a stack. Output the sequence of moves
+   the rail cars should follow, where U is push, P is pop, and O is over
+   (basically a push and a pop). For example, if the inbound order is ABC,
+   and the output order is BAC, then the proper order is UOPO, which pushes
+   train A, sends train B over, pops train A, and sends train C over.
+2. Write STACKADD and STACKMUL to take the top two values from the stack,
+   add and multiply them respectively, and push the result back on the stack.
+
+
