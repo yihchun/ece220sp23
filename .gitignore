@@ -7,6 +7,9 @@
 *.obj
 *.elf
 
+# LC-3 symbol table
+*.sym
+
 # Linker output
 *.ilk
 *.map
