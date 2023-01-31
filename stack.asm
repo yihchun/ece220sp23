@@ -17,6 +17,135 @@
 ; stack pointer init
 LEA R6, BOT_OF_STACK_PLUS1 ; initialize the stack pointer
 
+TRAIN_REORDER
+; Algorithm:
+; 1. check if out car is equal to the in car, if so, over
+; 2. check if out car is equal to the top of stack, if so, pop
+; 3. push the input car
+; Register allocation
+; R1 point to the current car input order
+; R2 points to the current car in the output order
+; R3 is negative of the label of the next output car
+LEA R1, INPUT_ORDER
+LEA R2, OUTPUT_ORDER
+
+TRLOOPTOP
+	LDR R3, R2, #0
+	BRz SUCCESS     ; we've output every requested car,
+	    		; sounds like a good day at the office
+	NOT R3, R3
+	ADD R3, R3, #1
+	LDR R4, R1, #0  ; current input car
+	ADD R5, R4, R3  ; current in - next out
+	BRz DO_OVER
+	JSR POP
+	ADD R5, R5, #0  ; set condition code based on success/failure
+	BRp DO_PUSH     ; nothing on the stack, so POP is not possible
+	ADD R5, R0, R3  ; compute top-of-stack - next out
+	BRz DO_POP
+	JSR PUSH        ; repush the PEEK'ed car to the stack
+DO_PUSH
+	LDR R0, R1, #0  ; the current input car
+	BRz NO_SOLUTION ; don't allow pushing of cars that don't exist
+	JSR PUSH        ; push it on the stack
+	ADD R5, R5, #0
+	BRp OVERFULL_SPUR
+	LD R0, PUSH_LABEL
+	OUT
+	ADD R1, R1, #1  ; move to next input car since we pushed the current one
+	BRnzp TRLOOPTOP
+
+DO_OVER
+	LD R0, OVER_LABEL ; tell the user we're sending a car over
+	OUT
+	ADD R1, R1, #1    ; move on to the next input car
+	ADD R2, R2, #1    ; move on to the next output car
+	BRnzp TRLOOPTOP
+
+DO_POP
+	LD R0, POP_LABEL
+	OUT
+	ADD R2, R2, #1    ; move to the next output car
+	BRnzp TRLOOPTOP
+
+NO_SOLUTION
+	LEA R0, NO_SOLUTION_STRING
+	PUTS
+SUCCESS
+	HALT
+
+OVERFULL_SPUR
+	LEA R0, SPUR_IS_FULL
+	PUTS
+	HALT
+
+SPUR_IS_FULL .STRINGZ "The spur has insufficient space to evaluate a solution."
+NO_SOLUTION_STRING .STRINGZ "There is no solution."
+OVER_LABEL .STRINGZ "V"
+PUSH_LABEL .STRINGZ "U"
+POP_LABEL  .STRINGZ "O"
+
+INPUT_ORDER .STRINGZ "ABCDEF"
+OUTPUT_ORDER .STRINGZ "FABCDE"
+
+
+; PUSH - push R0 to the top of the stack
+; R5 will be 0 if successful, and 1 otherwise
+PUSH
+	; is R6 == TOP_OF_STACK?
+	LEA R5, TOP_OF_STACK
+	NOT R5, R5
+	ADD R5, R5, #1 ; R5 <- -TOP_OF_STACK
+	ADD R5, R6, R5 ; R5 <- R6-TOP_OF_STACK
+	BRnz CANNOT_PUSH
+	
+	ADD R6, R6, #-1
+	STR R0, R6, #0
+	AND R5, R5, #0
+	BRnzp RET_FROM_PUSH
+
+CANNOT_PUSH
+	AND R5, R5, #0
+	ADD R5, R5, #1
+
+RET_FROM_PUSH
+	RET
+
+; POP - pops the top element from the stack into R0
+; R5 will be 0 if successful, and 1 otherwise
+
+POP
+	; is R6 == BOT_OF_STACK_PLUS1
+	LEA R5, BOT_OF_STACK_PLUS1
+	NOT R5, R5
+	ADD R5, R5, #1 ; R5 <- -BOT_OF_STACK_PLUS1
+	ADD R5, R6, R5 ; R5 <- R6-BOT_OF_STACK_PLUS1
+	               ; now R5 = -# of items in stack
+	BRzp CANNOT_POP
+
+	LDR R0, R6, #0 ; top of stack
+	ADD R6, R6, #1 ; remove one item from stack
+	AND R5, R5, #0 ; clear R5 to indicate success
+	BRnzp RET_FROM_POP
+
+CANNOT_POP
+	AND R5, R5, #0
+	ADD R5, R5, #1 ; R5 <- 1 to indicate failure
+
+RET_FROM_POP
+	RET ; return to the caller
+
+
+; X has matched parenthesis if X is formed using the following rules:
+; X <- empty string
+; X <- [X]
+; X <- (X)
+; X <- XX
+
+TOP_OF_STACK       .BLKW #100
+BOT_OF_STACK_PLUS1 .FILL #0
+
+PARENTHESIS_MATCH
 ; Register initialization
 ; R4 address of the character currently being analyzed
 ; R2 -'('
@@ -95,63 +224,6 @@ TEST_STRING .STRINGZ "[([])([()][])]()"
 SUCCESS_STRING .STRINGZ "Your parentheses match"
 FAILURE_STRING .STRINGZ "Your parentheses don't match"
 OVERFULL_STACK .STRINGZ "Our stack is too small to check your string"
-
-; PUSH - push R0 to the top of the stack
-; R5 will be 0 if successful, and 1 otherwise
-PUSH
-	; is R6 == TOP_OF_STACK?
-	LEA R5, TOP_OF_STACK
-	NOT R5, R5
-	ADD R5, R5, #1 ; R5 <- -TOP_OF_STACK
-	ADD R5, R6, R5 ; R5 <- R6-TOP_OF_STACK
-	BRnz CANNOT_PUSH
-	
-	ADD R6, R6, #-1
-	STR R0, R6, #0
-	AND R5, R5, #0
-	BRnzp RET_FROM_PUSH
-
-CANNOT_PUSH
-	AND R5, R5, #0
-	ADD R5, R5, #1
-
-RET_FROM_PUSH
-	RET
-
-; POP - pops the top element from the stack into R0
-; R5 will be 0 if successful, and 1 otherwise
-
-POP
-	; is R6 == BOT_OF_STACK_PLUS1
-	LEA R5, BOT_OF_STACK_PLUS1
-	NOT R5, R5
-	ADD R5, R5, #1 ; R5 <- -BOT_OF_STACK_PLUS1
-	ADD R5, R6, R5 ; R5 <- R6-BOT_OF_STACK_PLUS1
-	               ; now R5 = -# of items in stack
-	BRzp CANNOT_POP
-
-	LDR R0, R6, #0 ; top of stack
-	ADD R6, R6, #1 ; remove one item from stack
-	AND R5, R5, #0 ; clear R5 to indicate success
-	BRnzp RET_FROM_POP
-
-CANNOT_POP
-	AND R5, R5, #0
-	ADD R5, R5, #1 ; R5 <- 1 to indicate failure
-
-RET_FROM_POP
-	RET ; return to the caller
-
-
-; X has matched parenthesis if X is formed using the following rules:
-; X <- empty string
-; X <- [X]
-; X <- (X)
-; X <- XX
-
-TOP_OF_STACK       .BLKW #100
-BOT_OF_STACK_PLUS1 .FILL #0
-
 
 .END
 
