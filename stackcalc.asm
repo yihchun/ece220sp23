@@ -8,46 +8,46 @@
 ; -: pop two values (7,5), subtract them, and push the result (2)
 
 LEA R1, EVAL_STRING
-
+LEA R6, BOT_OF_STACK_PLUS1
+	
 LOOPTOP
 	LDR R0, R1, #0
 	BRz END_OF_STRING
 	; check if R0 is a digit
 	ADD R0, R0, #-16
 	ADD R0, R0, #-16
-	ADD R0, R0, #-16
-	BRn NOT_A_DIGIT
+	ADD R0, R0, #-16 ; subtract x30
+	BRn NOT_A_DIGIT  ; if our char < x30, not a digit
 	ADD R2, R0, #-9
-	BRp NOT_A_DIGIT
-	JSR PUSH
-	ADD R5, R5, #0
+	BRp NOT_A_DIGIT  ; if our char > x39, not a digit
+	JSR PUSH         ; push the digit
+	ADD R5, R5, #0   ; check for overflow
 	BRp OVERFLOW_STACK
-	ADD R1, R1, #1
+	ADD R1, R1, #1   ; move to next character
 	BRnzp LOOPTOP
 NOT_A_DIGIT
-	LDR R0, R1, #0
-	NOT R0, R0
+	LDR R0, R1, #0   ; reload the current character
+	NOT R0, R0  	 ; negate the current character to check against operators
 	ADD R0, R0, #1
 	LEA R2, OPS_STRING
 	LDR R3, R2, #0
 	ADD R3, R3, R0    ; will be zero if the operation is +
 	BRz STACK_ADD
 	LDR R3, R2, #1
-	ADD R3, R3, R0    ; will be zero if the operation is -
-	BRz STACK_SUB
-	LDR R3, R2, #2
-	ADD R3, R3, R0    ; will be zero if the operation is 
-	BRz STACK_MUL
+	ADD R3, R3, R0    ; will be zero if the operation is +
+	BRz STACK_SUBTRACT
+	; handle other characters
+	; e.g. print error, increment R1, BRnzp LOOPTOP
 
-STACK_ADD
-	JSR POP
+STACK_ADD		  ; handle the + operator
+	JSR POP           ; pop the second operand
 	; TODO: check R5
-	ADD R4, R0, #0    ; second operand
-	JSR POP           ; first operand
+	ADD R4, R0, #0    ; move second operand to R4
+	JSR POP           ; pop the first operand
 	; TODO: check R5
-	ADD R0, R0, R4
-	JSR PUSH
-	ADD R1, R1, #1
+	ADD R0, R0, R4    ; add operands together
+	JSR PUSH    	  ; push the sum to the stack
+	ADD R1, R1, #1    ; go to next character
 	BRnzp LOOPTOP
 
 END_OF_STRING
