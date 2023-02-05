@@ -45,26 +45,34 @@ Lecture 6: C
 ------------
 
 Prelecture: 13, 14a-c
-1. Print odd integers from 1-100
+
+1. Print an ASCII table from 33-127 inclusive
 2. Print the primes from 2-100
 3. Riemann integrate x*x from a to b over n steps
+
+And, we're ahead:
+4. Riemann integrate an arbitrary function from a to b over n steps
 
 Lecture 7: C functions
 ----------------------
 
 Prelecture: 15, 16a-b
 
-1. Riemann integrate an arbitrary function from a to b over n steps
-2. Write a function that computes a-choose-b (binomial coefficient)
-3. "Recursive" fibonacci + C-to-LC3
+1. Write a function that computes a-choose-b (binomial coefficient)
+2. "Recursive" fibonacci + C-to-LC3
+
+We're ahead, please see Prelecture 17, 18a-c also
+
+2. Revisiting: "Recursive" fibonacci + C-to-LC3
+3. Maximum of 3 numbers
 
 Lecture 8: Runtime Stack
 ------------------------
 
-Prelecture: 17, 18a-c
-1. "Recursive" fibonacci + C-to-LC3
-2. Maximum of 3 numbers
-3. Function to swap two values
+Do Lecture 9 material. Also
+1. Function to swap two values
+
+(Original schedule) Prelecture: 17, 18a-c
 
 Lecture 9: Pointers & Arrays
 ----------------------------
