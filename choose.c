@@ -2,9 +2,11 @@
 #include <assert.h>
 
 int fib_r(int n) {
+  int tmp;
   if (n == 0) return 0;
   if (n == 1) return 1;
-  return fib_r(n-1) + fib_r(n-2);
+  tmp = fib_r(n-1);
+  return tmp + fib_r(n-2);
 }
 
 int fib(int n) {
