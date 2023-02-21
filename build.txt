@@ -91,4 +91,55 @@ Prelecture: 23-24b
 1. String length
 2. String reverse
 
+Lecture 11: Problem solving with pointers and arrays
+----------------------------------------------------
+
+Guest Lecturer: Prof. Yuting Chen
+Prelecture: 25a-25b
+
+1. Linear search
+2. Binary search
+3. Bubble sort
+4. Insertion Sort
+
+Lecture 12: Recursion
+---------------------
+
+Prelecture: 26-27b
+
+1. Factorial
+2. Quicksort
+
+Lecture 13: Problem Solving with Recursion
+------------------------------------------
+
+Prelecture: 28a-28b
+
+1. n-queens
+2. Sudoku
+
+Lecture 14: File I/O in C
+-------------------------
+
+Prelecture: 29
+
+1. PPM blur
+Documentation for PPM format:
+https://netpbm.sourceforge.net/doc/ppm.html
+
+Lecture 15: Data Structures
+---------------------------
+
+Prelecture: 30-31
+
+1. Student structure I/O
+
+====================
+=== Spring Break ===
+====================
+
+Lecture 16: Dynamic Memory Allocation
+-------------------------------------
+
+Prelecture: 32
 
