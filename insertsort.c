@@ -45,26 +45,32 @@ unsigned int factorial(unsigned int N) { /* 1 */
 void myquicksort(int *arr, unsigned int len) {
   int p, i, tmp;
   int *left, *right;
+
   if (len < 2) return;
-  printf("Asking to sort: ");
-  for (i=0; i<len; i++)
-    printf("%d ", arr[i]);
-  printf("\n");
+  /* added another case for length 2,
+   * 1. because recursion doesn't make much sense, and
+   * 2. we were swapping the two elements regardless of order
+   */
+  if (len == 2) {
+    if (arr[0] > arr[1]) {
+      tmp = arr[0];
+      arr[0] = arr[1];
+      arr[1] = tmp;
+    }
+    return;
+  }
+
   p = *arr;
   /* perform partition */
   left = arr+1;
   right = arr+len-1;
-  for (i=1; i<len; i++) {
-    if (arr[i] < p) {
-    }
-  }
   while (right > left) {
     /* move right leftwards to a location that is < p */
-    while ((right >= left) && (*right > p))
+    while ((right >= left) && (*right >= p))
       right--;
     
     /* move left rightwards to a location that is > p */
-    while ((left <= right) && (*left < p))
+    while ((left <= right) && (*left <= p))
       left++;
 
     if (right < left) break;
@@ -80,7 +86,6 @@ void myquicksort(int *arr, unsigned int len) {
    * p [ > p           ]      p [ > p        ] 
    * ^R ^L                    R  L
    */
-  printf("%p %p %p\n", arr, left, right);
   arr[0] = *right;
   *right = p;
   myquicksort(arr, right-arr);
@@ -94,7 +99,7 @@ int main() {
   FILE *fp = fopen("/dev/urandom", "r");
   int i;
   int arr[SZ];
-  int tmp[2] = {2,3};
+  int tmp[3] = {2,3};
   for (i=0; i<SZ; i++) {
     arr[i] = fgetc(fp);
   }
@@ -105,9 +110,7 @@ int main() {
   }
   printf("\n");
 
-  //myquicksort(arr, SZ);
-  myquicksort(tmp, 2);
-  printf("%d %d\n", tmp[0], tmp[1]);
+  myquicksort(arr, SZ);
 
   for (i=0; i<SZ; i++) {
     printf("%d ", arr[i]);
