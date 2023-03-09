@@ -9,6 +9,7 @@
  */
 int sudoku_solver(int *board, int N) {
   int i, j, k, l, m, n, o, p;
+  /* Find a blank square (i.e., value == 0) */
   for (i=0; i<N*N; i++) {
     for (j=0; j<N*N; j++) {
       if (board[i*N*N+j] == 0)
@@ -16,7 +17,8 @@ int sudoku_solver(int *board, int N) {
     }
     if (j != N*N) break;
   }
-  if (i == N*N) return 1;
+  if (i == N*N) return 1; /* there are no blank squares, solution is good */
+  
   /* [i][j] is unpopulated, make progress by sticking something
    * in [i][j]
    */
@@ -43,10 +45,12 @@ int sudoku_solver(int *board, int N) {
       if (m != j-j%N+N) break;
     }
     if (l != i-i%N+N) continue;
-    
+
+    /* we can place a k at [i][j], so place and make recursive call */
     board[i*N*N+j] = k;
     if (sudoku_solver(board, N))
       return 1;
+    /* k at [i][j] does not work */
     board[i*N*N+j] = 0;
   }
   return 0;
