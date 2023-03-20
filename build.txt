@@ -143,3 +143,62 @@ Lecture 16: Dynamic Memory Allocation
 
 Prelecture: 32
 
+1. Dynamically handle an arbitrary number of students input from stdin
+
+Lecture 17: Linked Lists
+------------------------
+
+Prelecture: 33-34
+
+1. Build a linked list of integers: insert_head, print_list, delete_once, insert_sorted
+
+Lecture 18: Linked List Examples
+--------------------------------
+
+Prelecture: 35a-c
+
+1. Stack
+2. Queue
+3. Doubly-linked list
+
+Lecture 19: C to LC-3 with Linked Data Structures
+-------------------------------------------------
+
+Prelecture: 38
+Note: this prelecture assumes you've seen trees (prelectures 36-37) but
+because of how we are arranging the topics this semester, we will cover
+this topic using doubly linked lists instead.
+
+1. Doubly-linked list
+
+Lecture 20: Intro to C++: Objects, Constructors
+-----------------------------------------------
+
+Prelecture: 39
+
+MIDTERM 2
+
+Lecture 21: Intro to C++: inheritance and polymorphism
+------------------------------------------------------
+
+Prelecture: 40
+
+Lecture 22: Intro to C++: iterators and templates
+-------------------------------------------------
+
+Prelecture: 42
+
+Lecture 23: Trees, traversal and search
+---------------------------------------
+
+Prelecture: 36-37
+
+Lecture 24: C++ Examples
+------------------------
+
+Prelecture: 41, 43a, 43b (optional)
+
+Lecture 25: Interrupts and exceptions; Interrupt-driven I/O; TRAP
+-----------------------------------------------------------------
+
+Prelecture: 10, 11a, feel free to look at 11b, 11c as well
