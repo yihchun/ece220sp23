@@ -1,0 +1,67 @@
+			
+Static Allocation	known at compile time		lives forever
+Automatic Allocation	known at compile time (ANSI)	lives for function run
+	  		known at runtime (C99+)
+Dynamic Allocation	determined at runtime	    lives until explicitly freed
+
+OS
+Text
+Data
+Heap
+vvv
+^^^
+Stack
+OS
+
+void *malloc(size_t size_param)
+Returns a pointer to a contiguous, uninitialized chunk of memory
+of size at least size_param.
+If memory is insufficient to return such a large chunk, returns NULL.
+
+size_t is some kind of unsigned integer.
+
+void free(void *param)
+Frees memory previously allocated by malloc. Parameter MUST have been
+previously returned by malloc().
+
+int *p = malloc(100 * sizeof(int));
+free(p+1);
+
++-------------+
+| | free      |
++-------------+
+
+Pseudocode:
+malloc(x)
+  true_size = x + sizeof(malloc_header)
+  malloc_header *p = internally find a chunk that's close to and bigger than true_size
+  p->size = true_size
+  return p+1;
+
+
+free(x)
+  malloc_header *y = x;
+  int actual_size = y[-1].size;
+  ...
+  
+sizeof -- operator, not a function
+sizeof(int)
+interpreted at compile time
+takes a single operand either: a) type or b) an expression
+
+calloc(count, size)
+       ^ how many
+              ^ how big is each
+initializes the array to zero
+
+realloc(ptr, new_size)
+if ptr == NULL, then realloc() acts like malloc()
+if ptr is something that malloc() previously returned:
+  resizes ptr if possible, and if so, returns ptr
+  tries to find a new location of size new_size if possible, else returns NULL
+  if possible, then moves the contents of ptr to new_ptr and returns new_ptr
+    and frees ptr
+
+when you call realloc(): check the return value:
+  a) if return value is NULL, continue on with existing ptr if possible
+  b) if return value is non-NULL, update your pointer to the return value
