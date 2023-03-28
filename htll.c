@@ -11,6 +11,49 @@ typedef struct {
   LLNode *tail;
 } LinkedList;
 
+void delete_head(LinkedList *list) {
+  LLNode *tmp;
+  /* check for empty list */
+  if (!list->head)
+    return;
+  tmp = list->head->next;
+  free(list->head);
+  list->head = tmp;
+  if (tmp == NULL)
+    list->tail = NULL;
+}
+
+/* delete the first instance of victim in list */
+int delete_first(LinkedList *list, int victim) {
+  LLNode *walk;
+  LLNode *tmp;
+  /* check for empty list */
+  if (list->head == NULL)
+    return 0;
+  /* check for the case where we delete the first element */
+  if (list->head->data == victim) {
+    delete_head(list);
+    return 1;
+  }
+  walk = list->head;
+  while (walk->next != NULL) {
+    if (walk->next->data == victim) {
+      tmp = walk->next;
+      if (walk->next->next == NULL)
+	list->tail = walk;
+      walk->next = walk->next->next; /* in prof. hu's opinion should be tmp->next */
+      free(tmp);
+      /* my approach:
+	 if (list->tail == tmp)
+	   list->tail = walk;
+      */
+      return 1;
+    }
+    walk = walk->next;
+  }
+  return 0;
+}
+
 void insert_head(LinkedList *list, int val) {
   LLNode *tmp = malloc(sizeof(LLNode));
   
@@ -53,6 +96,11 @@ int main() {
   insert_tail(&list, 8);
   insert_head(&list, 9);
   insert_tail(&list, 10);
+  print_linkedlist(list);
+  delete_head(&list);
+  print_linkedlist(list);
+  delete_first(&list, 10);
+  insert_tail(&list, 11);
   print_linkedlist(list);
   return 0;
 }
