@@ -34,7 +34,8 @@ void deleteElement(dllNode **head, dllNode *victim) {
   dllNode *tmp;
   if (*head == victim) { /* alt. victim->prev == NULL */
     *head = victim->next;
-    victim->next->prev = NULL; /* (*head)->prev = NULL */
+    if (victim->next)
+      victim->next->prev = NULL; /* (*head)->prev = NULL */
     free(victim);
   } else {
     victim->prev->next = victim->next;
