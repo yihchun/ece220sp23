@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stack>
+#include <utility>
 
 using namespace std;
 
@@ -13,6 +15,34 @@ class BST {
   };
 public:
   BST() { root = NULL; }
+
+  class BSTIterator : public iterator<forward_iterator_tag, T> {
+  public:
+    BSTIterator() { }
+    BSTIterator(BSTNode *start) {
+      while (start) {
+	state.push(make_pair(start, false));
+	start = start->left;
+      }
+    }
+
+  private:
+    void step() {
+      BSTNode *tmp;
+      /* still working on this part of the code: another special
+       * case to deal with here 4/18
+       */
+      if (stack.top().second == false) {
+	stack.top().second = true;
+	for (tmp = stack.top()->right; tmp; tmp = tmp->left)
+	  state.push(make_pair(tmp, false));
+      }
+	
+    }
+    
+    stack<pair<BSTNode *,bool>> state; /* boolean is have you gone right yet */
+  }
+  
   void insert(const T &v) {
     BSTNode **cur = &root;
     while (*cur) {
@@ -47,75 +77,39 @@ public:
     if (*cur == NULL) /* not found */
       return;
 
-    /* 0-1 child case
-    if ((*cur)->left == NULL || (*cur)->right == NULL) {
-      tmp = *cur;
-      *cur = tmp->left ? tmp->left : tmp->right;
-      delete tmp;
-      return;
-      } */
+    if ((*cur)->left != NULL && (*cur)->right != NULL) {
+      tmp = *cur; /* victim */
+      cur = &((*cur)->left);
+      while ((*cur)->right)
+	cur = &((*cur)->right);
+      /* now *cur points to the rightmost node in the left subtree of victim */
+      tmp->val = (*cur)->val;
+    }
       
-    /* 0 children */
-    if ((*cur)->left == NULL && (*cur)->right == NULL) {
-      *cur = NULL;
-      delete *cur;
-      return;
-    }
-    /* 1 child */
-    if ((*cur)->left == NULL) {
-      tmp = *cur;
-      *cur = tmp->right;
-      delete tmp;
-      return;
-    }
-    if ((*cur)->right == NULL) {
-      tmp = *cur;
-      *cur = tmp->left;
-      delete tmp;
-      return;
-    }
-    /* 2 child */
-    tmp = *cur; /* victim */
-    cur = &((*cur)->left);
-    while ((*cur)->right)
-      cur = &((*cur)->right);
-    /* now *cur points to the rightmost node in the left subtree of victim */
-    tmp->val = (*cur)->val;
-    if ((*cur)->left == NULL && (*cur)->right == NULL) {
-      *cur = NULL;
-      delete *cur;
-      return;
-    }
-    /* 1 child */
-    if ((*cur)->left == NULL) {
-      tmp = *cur;
-      *cur = tmp->right;
-      delete tmp;
-      return;
-    }
-    
-    
-    /*
-    tmp = (*cur)->left;
-    if (!tmp->right) {
-      tmp->right = (*cur)->right;
-      (*cur)->val = tmp->val;
-      
-    }
-    while (tmp->right && tmp->right->right)
-      tmp = tmp->right;
-    */
-    
+    tmp = *cur;
+    *cur = tmp->left ? tmp->left : tmp->right;
+    delete tmp;
   }
 
   BSTNode *root;
 };
+
+/*
+void traverse(BST<int>::BSTNode *x) {
+  if (!x) return;
+  traverse(x->left);  // PC = 1
+  x->val;             // PC = 2
+  traverse(x->right); // PC = 3
+}
+*/
 
 int main() {
   BST<int> t;
   t.insert(5);
   t.insert(3);
   t.insert(7);
+  t.insert(4);
+  t.insert(2);
   
   cout << t.find(5) << endl;
   cout << t.find(3) << endl;
@@ -126,5 +120,11 @@ int main() {
   cout << t.find(5) << endl;
   cout << t.find(3) << endl;
   cout << t.find(7) << endl;
+  cout << t.find(4) << endl;
+  cout << t.find(2) << endl;
+
+  auto it = t.begin();
+  cout << *it << endl;
+  
   return 0;
 }
