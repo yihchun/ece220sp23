@@ -25,23 +25,35 @@ public:
 	start = start->left;
       }
     }
+    BSTIterator(const BSTIterator &x) { state = x.state; }
+    BSTIterator &operator=(const BSTIterator &x) {
+      /* probably not needed: while (!state.empty()) state.pop(); */
+      state = x.state;
+      return *this;
+    }
+    BSTIterator &operator++() { step(); return *this; }
+    BSTIterator operator++(int) { BSTIterator tmp(*this); step(); return tmp; }
+    bool operator==(const BSTIterator &x) { return state == x.state; }
+    bool operator!=(const BSTIterator &x) { return state != x.state; }
+    const T &operator*() const { return state.top().first->val; }
 
   private:
     void step() {
       BSTNode *tmp;
-      /* still working on this part of the code: another special
-       * case to deal with here 4/18
-       */
-      if (stack.top().second == false) {
-	stack.top().second = true;
-	for (tmp = stack.top()->right; tmp; tmp = tmp->left)
+      if (state.empty()) return;
+      if ((state.top().second == false) && (state.top().first->right != NULL)) {
+	state.top().second = true;
+	for (tmp = state.top().first->right; tmp; tmp = tmp->left)
 	  state.push(make_pair(tmp, false));
+	return;
       }
-	
+      do {
+	state.pop();
+      } while (!state.empty() && state.top().second);
     }
     
-    stack<pair<BSTNode *,bool>> state; /* boolean is have you gone right yet */
-  }
+    stack<pair<BSTNode *,bool> > state; /* boolean is have you gone right yet */
+  };
   
   void insert(const T &v) {
     BSTNode **cur = &root;
@@ -90,6 +102,8 @@ public:
     *cur = tmp->left ? tmp->left : tmp->right;
     delete tmp;
   }
+  BSTIterator begin() { return BSTIterator(root); }
+  BSTIterator end() { return BSTIterator(); }
 
   BSTNode *root;
 };
@@ -111,20 +125,13 @@ int main() {
   t.insert(4);
   t.insert(2);
   
-  cout << t.find(5) << endl;
-  cout << t.find(3) << endl;
-  cout << t.find(7) << endl;
-
+  for (auto i: t)
+    cout << i << endl;
+  
   t.remove(5);
   
-  cout << t.find(5) << endl;
-  cout << t.find(3) << endl;
-  cout << t.find(7) << endl;
-  cout << t.find(4) << endl;
-  cout << t.find(2) << endl;
+  for (auto i: t)
+    cout << i << endl;
 
-  auto it = t.begin();
-  cout << *it << endl;
-  
   return 0;
 }
